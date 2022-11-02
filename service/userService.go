@@ -5,7 +5,6 @@ import (
 	"final-assignment/helper/input"
 	"final-assignment/model"
 	"final-assignment/repository"
-	"log"
 	"net/mail"
 
 	"golang.org/x/crypto/bcrypt"
@@ -41,7 +40,6 @@ func (s *userService) CreateUser(input input.UserInput) (model.User, error) {
 
 	user.Password = string(passwordHash)
 
-	log.Println(user)
 	newUser, err := s.userRepo.Register(user)
 	if err != nil {
 		return model.User{}, err

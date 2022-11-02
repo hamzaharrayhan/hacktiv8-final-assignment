@@ -5,7 +5,6 @@ import (
 	"final-assignment/helper/input"
 	"final-assignment/helper/response"
 	"final-assignment/service"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -157,7 +156,6 @@ func UpdateSocialMedia(c *gin.Context) {
 	}
 
 	update := input.SocialMediaInput{}
-	log.Println("updatenya apaaaaaaaaaaaaaa", update)
 	err := c.ShouldBindJSON(&update)
 
 	if err != nil {
@@ -214,7 +212,6 @@ func UpdateSocialMedia(c *gin.Context) {
 	}
 
 	updated, err := socialMediaService.GetSocialMediaByID(idSocmed)
-	log.Println("updatedddddd", updated)
 	if err != nil {
 		errorMessages := helper.FormatValidationError(err)
 		response := helper.JSONResponse("failed", gin.H{

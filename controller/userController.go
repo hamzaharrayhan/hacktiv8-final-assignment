@@ -7,7 +7,6 @@ import (
 	"final-assignment/middleware"
 	"final-assignment/service"
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -25,7 +24,6 @@ func RegisterUser(c *gin.Context) {
 	var userInput input.UserInput
 
 	err := c.ShouldBindJSON(&userInput)
-	log.Println(userInput)
 	if err != nil {
 		errorMessages := gin.H{
 			"errors": err,
