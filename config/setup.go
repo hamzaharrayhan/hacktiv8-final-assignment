@@ -37,4 +37,7 @@ func CreateServices() {
 
 func CreateController() {
 	controller.NewUserController(userService)
+	controller.NewPhotoController(photoService, commentService, userService)
+	controller.NewCommentController(commentService, photoService)
+	controller.NewSocialMediaController(socialMediaService, userService)
 }

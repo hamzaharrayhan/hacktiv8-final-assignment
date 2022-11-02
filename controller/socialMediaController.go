@@ -5,6 +5,7 @@ import (
 	"final-assignment/helper/input"
 	"final-assignment/helper/response"
 	"final-assignment/service"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -89,7 +90,7 @@ func DeleteSocialmedia(c *gin.Context) {
 
 	socialMedia, err := socialMediaService.GetSocialMediaByID(idSocmed)
 	if err != nil {
-		response := helper.JSONResponse("failed", "photo not found")
+		response := helper.JSONResponse("failed", "social media not found")
 		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
 		return
 	}
@@ -156,7 +157,7 @@ func UpdateSocialMedia(c *gin.Context) {
 	}
 
 	update := input.SocialMediaInput{}
-
+	log.Println("updatenya apaaaaaaaaaaaaaa", update)
 	err := c.ShouldBindJSON(&update)
 
 	if err != nil {
@@ -164,7 +165,7 @@ func UpdateSocialMedia(c *gin.Context) {
 		response := helper.JSONResponse("failed", gin.H{
 			"errors": errorMessages,
 		})
-		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		c.AbortWithStatusJSON(http.StatusBadGateway, response)
 		return
 	}
 
@@ -172,21 +173,21 @@ func UpdateSocialMedia(c *gin.Context) {
 
 	idSocmed, err := strconv.Atoi(socmedID)
 	if err != nil {
-		response := helper.JSONResponse("failed", "social media not found")
-		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		response := helper.JSONResponse("failed", "social media id not found")
+		c.AbortWithStatusJSON(http.StatusBadGateway, response)
 		return
 	}
 
 	if idSocmed == 0 {
 		response := helper.JSONResponse("failed", "id must be exist")
-		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		c.AbortWithStatusJSON(http.StatusBadGateway, response)
 		return
 	}
 
 	socialMedia, err := socialMediaService.GetSocialMediaByID(idSocmed)
 	if err != nil {
-		response := helper.JSONResponse("failed", "photo not found")
-		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		response := helper.JSONResponse("failed", "social media not found")
+		c.AbortWithStatusJSON(http.StatusBadGateway, response)
 		return
 	}
 
@@ -199,7 +200,7 @@ func UpdateSocialMedia(c *gin.Context) {
 	queryResult, err := socialMediaService.UpdateSocialMedia(idSocmed, update)
 
 	if queryResult.ID == 0 {
-		response := helper.JSONResponse("failed", "photo not found!")
+		response := helper.JSONResponse("failed", "update social media failed")
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
@@ -212,7 +213,8 @@ func UpdateSocialMedia(c *gin.Context) {
 		c.JSON(http.StatusUnprocessableEntity, response)
 	}
 
-	Updated, err := socialMediaService.GetSocialMedia(idSocmed)
+	updated, err := socialMediaService.GetSocialMediaByID(idSocmed)
+	log.Println("updatedddddd", updated)
 	if err != nil {
 		errorMessages := helper.FormatValidationError(err)
 		response := helper.JSONResponse("failed", gin.H{
@@ -221,6 +223,6 @@ func UpdateSocialMedia(c *gin.Context) {
 		c.JSON(http.StatusUnprocessableEntity, response)
 	}
 
-	response := helper.JSONResponse("ok", Updated)
+	response := helper.JSONResponse("Your social media has been successfully deleted", updated)
 	c.JSON(http.StatusOK, response)
 }

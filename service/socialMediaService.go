@@ -91,12 +91,10 @@ func (s *socialMediaService) UpdateSocialMedia(ID int, input input.SocialMediaIn
 		return model.SocialMedia{}, nil
 	}
 
-	updated := model.SocialMedia{
-		Name: input.Name,
-		URL:  input.URL,
-	}
+	result.Name = input.Name
+	result.URL = input.URL
 
-	socialmediaUpdate, err := s.socialMediaRepo.Update(updated, ID)
+	socialmediaUpdate, err := s.socialMediaRepo.Update(result, ID)
 
 	if err != nil {
 		return model.SocialMedia{}, err

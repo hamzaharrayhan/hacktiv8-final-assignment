@@ -198,6 +198,6 @@ func UpdateComment(c *gin.Context) {
 		return
 	}
 
-	response := helper.JSONResponse("ok", Updated)
+	response := helper.JSONResponse("Your comment has been successfully deleted", Updated)
 	c.JSON(http.StatusOK, response)
 }

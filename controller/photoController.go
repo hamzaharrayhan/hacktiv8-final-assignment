@@ -273,6 +273,6 @@ func UpdatePhoto(c *gin.Context) {
 
 	photoUpdated, _ := photoService.GetPhotoByID(idPhoto)
 
-	response := helper.JSONResponse("ok", photoUpdated)
+	response := helper.JSONResponse("Your photo has been successfully deleted", photoUpdated)
 	c.JSON(http.StatusOK, response)
 }

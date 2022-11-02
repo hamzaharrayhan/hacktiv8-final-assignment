@@ -27,9 +27,8 @@ func RegisterUser(c *gin.Context) {
 	err := c.ShouldBindJSON(&userInput)
 	log.Println(userInput)
 	if err != nil {
-		errors := helper.FormatValidationError(err)
 		errorMessages := gin.H{
-			"errors": errors,
+			"errors": err,
 		}
 
 		response := helper.JSONResponse("failed", errorMessages)
@@ -50,11 +49,16 @@ func RegisterUser(c *gin.Context) {
 		return
 	}
 
+	if userInput.Age <= 8 {
+		response := helper.JSONResponse("failed", gin.H{"error": "You must be older or equal to 8 to register an account"})
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
 	newUser, err := userService.CreateUser(userInput)
 	if err != nil {
-		errors := helper.FormatValidationError(err)
 		errorMessages := gin.H{
-			"errors": errors,
+			"errors": err,
 		}
 
 		response := helper.JSONResponse("failed", errorMessages)
@@ -223,6 +227,6 @@ func DeleteUser(c *gin.Context) {
 		return
 	}
 
-	response := helper.JSONResponse("account deleted", gin.H{"message": "Your account has been successfully deleted"})
+	response := helper.JSONResponse("success", gin.H{"message": "Your account has been successfully deleted"})
 	c.JSON(http.StatusOK, response)
 }
