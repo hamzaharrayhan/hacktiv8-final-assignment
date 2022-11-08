@@ -129,19 +129,24 @@ func GetPhotos(c *gin.Context) {
 
 	photos, err := photoService.GetPhotosUser(currentUser)
 
-	var photoResponse []response.GetUserPhoto
+	var photoResponse []response.GetPhotoWithUserDetail
 
-	for _, index := range photos {
+	for _, photo := range photos {
+		user, _ := userService.GetUserByID(photo.UserID)
+		commentTmp, _ := commentService.GetCommentsByPhotoID(photo.ID)
 
-		commentTmp, _ := commentService.GetCommentsByPhotoID(index.ID)
-
-		photoResponseTmp := response.GetUserPhoto{
-			ID:        index.ID,
-			Title:     index.Title,
-			Caption:   index.Caption,
-			PhotoURL:  index.PhotoURL,
-			CreatedAt: index.CreatedAt,
+		photoResponseTmp := response.GetPhotoWithUserDetail{
+			ID:        photo.ID,
+			Title:     photo.Title,
+			Caption:   photo.Caption,
+			PhotoURL:  photo.PhotoURL,
+			CreatedAt: photo.CreatedAt,
 			Comments:  commentTmp,
+			User: response.UserPhoto{
+				ID:       user.ID,
+				Username: user.Username,
+				Email:    user.Email,
+			},
 		}
 
 		photoResponse = append(photoResponse, photoResponseTmp)
@@ -153,56 +158,6 @@ func GetPhotos(c *gin.Context) {
 			"errors": errorMessages,
 		})
 		c.JSON(http.StatusUnprocessableEntity, response)
-	}
-
-	response := helper.JSONResponse("ok", photoResponse)
-	c.JSON(http.StatusOK, response)
-}
-
-func GetPhoto(c *gin.Context) {
-	photoID := c.Param("photoId")
-
-	idPhoto, err := strconv.Atoi(photoID)
-	if err != nil {
-		response := helper.JSONResponse("failed", "comment not found")
-		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
-		return
-	}
-
-	if idPhoto == 0 {
-		response := helper.JSONResponse("failed", "id must be exist")
-		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
-		return
-	}
-
-	photo, err := photoService.GetPhotoByID(idPhoto)
-	if err != nil {
-		response := helper.JSONResponse("failed", "id must be exist")
-		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
-		return
-	}
-
-	user, err := userService.GetUserByID(photo.UserID)
-	if err != nil {
-		response := helper.JSONResponse("failed", "user not found")
-		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
-		return
-	}
-
-	comments, _ := commentService.GetCommentsByPhotoID(idPhoto)
-
-	photoResponse := response.GetPhotoWithUserDetail{
-		ID:        photo.ID,
-		Title:     photo.Title,
-		Caption:   photo.Caption,
-		PhotoURL:  photo.PhotoURL,
-		CreatedAt: photo.CreatedAt,
-		Comments:  comments,
-		User: response.UserPhoto{
-			ID:       user.ID,
-			Username: user.Username,
-			Email:    user.Email,
-		},
 	}
 
 	response := helper.JSONResponse("ok", photoResponse)
